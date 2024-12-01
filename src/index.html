@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./output.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>집찾기노트</title>
+</head>
+<body>
+    <div class="flex flex-col h-screen">
+
+        <div class="p-4 ml-8 font-bold text-lg">
+            집찾기노트
+        </div>
+
+        <div class="flex border-t border-gray-200 gap-4">
+            <div class="p-2">
+                <input type="text" class="pl-2 h-10 w-60" placeholder="주소 검색">
+            </div>
+            <button class="flex items-center text-xl mr-2">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+    
+            <div class="w-px bg-gray-300"></div>
+    
+            
+            <div class="flex items-center gap-4 p-2">
+                
+                <select class="px-4 py-2 border rounded-md bg-white cursor-pointer outline-none">
+                <option>역세권/도보</option>
+                <option>5분거리</option>
+                <option>10분거리</option>
+                <option>15분거리</option>
+                </select>
+            
+                
+                <select class="px-4 w-28 py-2 border rounded-md bg-white cursor-pointer outline-none">
+                <option>매물종류</option>
+                <option>아파트</option>
+                <option>오피스텔</option>
+                <option>빌라</option>
+                </select>
+    
+                <select class="px-4 w-28 py-2 border rounded-md bg-white cursor-pointer outline-none">
+                <option>가격대</option>
+                <option>1억</option>
+                <option>2억</option>
+                <option>3억</option>
+                </select>
+    
+            </div>
+        </div>
+        
+        <div class="w-full h-px bg-gray-400"></div>
+
+        <div class="flex flex-1 w-screen">
+            <div id="map" class="w-2/3 h-full"></div>
+            
+        </div>
+    </div>
+    
+
+    
+
+
+
+
+
+
+
+    <script src="http://dapi.kakao.com/v2/maps/sdk.js?appkey=4b784a9366d345b4ae0fc269a0ade70c&libraries=clusterer"></script>
+    <script src="./index.js"></script>
+
+</body>
+</html>
