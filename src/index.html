@@ -22,8 +22,17 @@
         <div class="flex w-screen border-t border-gray-200">
 
             <div class="flex gap-4 w-2/3">
-                <div class="p-2">
-                    <input type="text" class="pl-2 h-10 w-60" placeholder="주소 검색">
+                <div class="p-2 relative">
+                    <input id="searchInput" type="text" class="pl-2 h-10 w-60" placeholder="주소 검색">
+                    <div id="autocompleteList" class="absolute w-full mt-1 bg-white border rounded-lg shadow-lg max-h-60 overflow-y-auto z-10 hidden">
+                        <div class="py-2 hidden">
+                            <div class="px-4 py-2 hover:bg-gray-100 cursor-pointer hidden">자동완성 항목 1</div>
+                            <div class="px-4 py-2 hover:bg-gray-100 cursor-pointer hidden">자동완성 항목 2</div>
+                            <div class="px-4 py-2 hover:bg-gray-100 cursor-pointer hidden">자동완성 항목 3</div>
+                            <div class="px-4 py-2 hover:bg-gray-100 cursor-pointer hidden">자동완성 항목 3</div>
+                            <div class="px-4 py-2 hover:bg-gray-100 cursor-pointer hidden">자동완성 항목 3</div>
+                        </div>
+                    </div>
                 </div>
                 <button class="flex items-center text-xl mr-2">
                     <i class="fa-solid fa-magnifying-glass"></i>
@@ -197,6 +206,8 @@
 
 
     <script src="http://dapi.kakao.com/v2/maps/sdk.js?appkey=4b784a9366d345b4ae0fc269a0ade70c&libraries=clusterer"></script>
+    <script src="./trie.js"></script>
+    <script src="./parser.js"></script>
     <script src="./index.js"></script>
 
 </body>
