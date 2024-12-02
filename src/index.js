@@ -30,6 +30,69 @@ function searchAreaEventSetting(cityCode) {
     const autocompleteList = document.querySelector('#autocompleteList');
     const autocompleteListItems = autocompleteList.firstElementChild;
 
+    const createAutoCompleteManager = () => {
+        let currentResults = [];
+        let selectedIndex = -1;
+
+        const setResults = (results) => {
+            currentResults = results;
+            selectedIndex = -1;
+        };
+
+        const getCurrentResults = () => currentResults;
+        const setSelectedIndex = (index) => {
+            console.log(index);
+            return selectedIndex = index;
+        } 
+
+        const moveSelection = (direction) => {
+            if (currentResults.length === 0) return selectedIndex;
+            
+            if (direction === 'up') {
+                selectedIndex = selectedIndex <= 0 ? currentResults.length - 1 : selectedIndex - 1;
+            } else if (direction === 'down') {
+                selectedIndex = selectedIndex >= currentResults.length - 1 ? 0 : selectedIndex + 1;
+            }
+            
+            return selectedIndex;
+        };
+
+        const getSelectedItem = () => {
+            console.log("getSelectedItem" + selectedIndex);
+            return selectedIndex >= 0 ? currentResults[selectedIndex] : null;
+        }
+
+        return {
+            setResults,
+            getCurrentResults,
+            setSelectedIndex,
+            moveSelection,
+            getSelectedItem
+        };
+    }
+
+    const autoCompleteManager = createAutoCompleteManager();
+
+    // 자동완성 결과 표시 함수
+    const renderAutoComplete = (results) => {
+        autoCompleteManager.setResults(results);
+        
+        if (results.length === 0) {
+            autocompleteListItems.classList.add('hidden');
+            return;
+        }
+
+        autocompleteListItems.classList.remove('hidden');
+        autocompleteListItems.querySelectorAll('div').forEach((item, index) => {
+            if (index < results.length) {
+                item.innerText = results[index];
+                item.classList.remove('hidden');
+            } else {
+                item.classList.add('hidden');
+            }
+        });
+    };
+
     // 포커스 시 리스트 표시
     searchInput.addEventListener('focus', () => {
         autocompleteList.classList.remove('hidden');
@@ -37,13 +100,19 @@ function searchAreaEventSetting(cityCode) {
 
     // 포커스 아웃 시 리스트 숨기기
     searchInput.addEventListener('blur', (e) => {
-        autocompleteList.classList.add('hidden');
+        // relatedTarget으로 포커스가 이동한 요소 확인
+        if (!autocompleteList.contains(e.relatedTarget)) {
+            autocompleteList.classList.add('hidden');
+        }
     });
 
     // 키 입력 시 자동완성
     searchInput.addEventListener('input', (e) => {
+        autoCompleteManager.setSelectedIndex(-1);
+        highlightSelected(-1);
+
         if (e.target.value === '') {
-            autocompleteListItems.classList.add('hidden');
+            renderAutoComplete([]);
             return;
         }
 
@@ -64,22 +133,60 @@ function searchAreaEventSetting(cityCode) {
             }
         } 
 
-        // console.log(arr);
+        renderAutoComplete(arr);
         
-        if (arr.length === 0) {
-            autocompleteListItems.classList.add('hidden');
-            return;
-        }
+    });
 
-        autocompleteListItems.classList.remove('hidden');
-        // console.log(autocompleteListItems.querySelectorAll('div'));
-        autocompleteListItems.querySelectorAll('div').forEach((item, index) => {
-            if (index < arr.length) {
-                item.innerText = arr[index];
-                item.classList.remove('hidden');
-            } else {
-                item.classList.add('hidden');
+    
+    // 입력 필드 키보드 이벤트 (엔터, 방향키)
+
+    // 선택된 항목 하이라이트
+    const highlightSelected = (index) => {
+        const items = autocompleteListItems.querySelectorAll('div:not(.hidden)');
+        items.forEach((item, i) => {
+            item.classList.toggle('bg-gray-100', i === index);
+        });
+    };
+
+    // 키보드 이벤트 핸들러
+    const handleKeyboardNavigation = (event) => {
+        const keyActions = {
+            'Enter': () => {
+                const selectedItem = autoCompleteManager.getSelectedItem();
+                if (selectedItem) {
+                    searchInput.value = selectedItem;
+                    autocompleteListItems.classList.add('hidden');
+                }
+            },
+            'ArrowUp': () => {
+                event.preventDefault();
+                const newIndex = autoCompleteManager.moveSelection('up');
+                highlightSelected(newIndex);
+            },
+            'ArrowDown': () => {
+                event.preventDefault();
+                const newIndex = autoCompleteManager.moveSelection('down');
+                highlightSelected(newIndex);
             }
+        };
+
+        const action = keyActions[event.key];
+        if (action) action();
+    };
+
+    searchInput.addEventListener('keydown', handleKeyboardNavigation);
+
+    // 자동완성 리스트 마우스 이벤트
+    autocompleteListItems.querySelectorAll('div').forEach((item, index) => {
+
+        item.addEventListener('click', () => {
+            searchInput.value = item.innerText;
+            autocompleteListItems.classList.add('hidden');
+        });
+
+        item.addEventListener('mouseenter', () => {
+            autoCompleteManager.setSelectedIndex(index);
+            highlightSelected(index);
         });
     });
 }
