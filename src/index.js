@@ -230,6 +230,61 @@ function setMapView(cityCode, map) {
     });
 }
 
+function priceFormat(priceNum) {
+    const price = parseInt(priceNum.replace(/,/g, ''));
+    return price > 10000 ? `${Math.floor(price / 10000)}억 ${(price % 10000).toLocaleString()}만원` : `${price.toLocaleString()}만원`;
+}
+
+function createMarkerClickEvent(data, list) { 
+    return () => {
+        const panel = document.querySelector('#rightPanel');
+        panel.classList.remove('hidden');
+
+        panel.querySelector('#apt').innerText = data.aptNm
+        panel.querySelector('#address').innerText = `${data.estateAgentSggNm} ${data.roadNm} ${parseInt(data.roadNmBonbun)}`
+        panel.querySelector('#price').innerText = priceFormat(data.dealAmount);
+
+        const date = new Date(data.dealYear, data.dealMonth - 1, data.dealDay);
+        const formatDate = `${date.getFullYear()}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getDate().toString().padStart(2, '0')}`;
+        panel.querySelector('#date').innerText = formatDate;
+
+        panel.querySelector('#sizeOfmeter').innerText = `${parseFloat(data.excluUseAr).toFixed(2)}㎡`;
+        panel.querySelector('#sizeOfpyeong').innerText = `(${parseFloat(data.excluUseAr * 0.3025).toFixed(1)}평)`;
+
+        panel.querySelector('#floor').innerText = `${data.floor}층`;
+        panel.querySelector('#buildYear').innerText = `${data.buildYear}년`;
+        panel.querySelector('#slerGbn').innerText = data.slerGbn;
+
+        document.querySelector('#around1').classList.add('hidden');
+        document.querySelector('#around2').classList.add('hidden');
+
+        console.log(list);
+
+        if (list.length >= 1) {
+            panel.querySelector('#around-name1').innerText = list[0].aptNm;
+            panel.querySelector('#around-size-floor1').innerText = `${parseFloat(list[0].excluUseAr).toFixed(2)}㎡ / ${list[0].floor}층`;
+            panel.querySelector('#around-price1').innerText = priceFormat(list[0].dealAmount);
+
+            const date1 = new Date(list[0].dealYear, list[0].dealMonth - 1, list[0].dealDay);
+            panel.querySelector('#around-date1').innerText = `${date1.getFullYear()}.${(date1.getMonth() + 1).toString().padStart(2, '0')}.${date1.getDate().toString().padStart(2, '0')}`;
+            document.querySelector('#around1').classList.remove('hidden');
+        }
+
+        if (list.length >= 2) {
+            panel.querySelector('#around-name2').innerText = list[1].aptNm;
+            panel.querySelector('#around-size-floor2').innerText = `${parseFloat(list[1].excluUseAr).toFixed(2)}㎡ / ${list[1].floor}층`;
+            panel.querySelector('#around-price2').innerText = priceFormat(list[1].dealAmount);
+
+            const date2 = new Date(list[1].dealYear, list[1].dealMonth - 1, list[1].dealDay);
+            panel.querySelector('#around-date2').innerText = `${date2.getFullYear()}.${(date2.getMonth() + 1).toString().padStart(2, '0')}.${date2.getDate().toString().padStart(2, '0')}`;
+            document.querySelector('#around2').classList.remove('hidden');
+        }
+
+    };
+}
+
+
+
 function pickerChange(clusterer, map, arr) {
     clusterer.clear();
     
@@ -249,14 +304,11 @@ function pickerChange(clusterer, map, arr) {
                 
                 clusterer.addMarker(marker);
 
-                const price = parseInt(item.dealAmount.replace(/,/g, ''));
-                const priceStr = price > 10000 ? `${Math.floor(price / 10000)}억 ${(price % 10000).toLocaleString()}` : `${price.toLocaleString()}`;
-                
                 const infowindow = new kakao.maps.InfoWindow({
                     content : `<div class="flex flex-col items-center">
                                     <div class="bg-white shadow-lg w-36 rounded-xl p-3 mb-2 transition-transform transform group-hover:scale-105 backdrop-blur-sm bg-opacity-95">
                                         <div class="text-sm font-medium">${item.aptNm}</div>
-                                        <div class="text-blue-500 font-bold text-lg">${priceStr}</div>
+                                        <div class="text-blue-500 font-bold text-lg">${priceFormat(item.dealAmount).slice(0, -2)}</div>
                                     </div>
                                 </div>`,
                     removable : true
@@ -268,21 +320,13 @@ function pickerChange(clusterer, map, arr) {
                 kakao.maps.event.addListener(marker, 'mouseout', function() {
                     infowindow.close();
                 });
-
-                // // 인포윈도우로 장소에 대한 설명을 표시합니다
-                // var infowindow = new kakao.maps.InfoWindow({
-                //     content: '<div style="width:150px;text-align:center;padding:6px 0;">우리회사</div>'
-                // });
-                // infowindow.open(map, marker);
-        
-                // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
-                // map.setCenter(coords);
+                kakao.maps.event.addListener(marker, 'click', createMarkerClickEvent(item, arr));
             } 
         });
     });
 }
 
-async function createDataFetch(clustery, map, action) {
+async function createDataFetch(clustery, map) {
     return async (cityCode, cityName) => {
         const size = 1000;
         const url = `https://apis.data.go.kr/1613000/RTMSDataSvcAptTradeDev/getRTMSDataSvcAptTradeDev?LAWD_CD=${cityCode}&numOfRows=${size}&serviceKey=bMwwNr1uwE0kwt%2BQ5tCxjvNwBHQL0bIaJiBfd31z8vIvj5gcagERlUf6Pw0J%2BmQWhyjCNsednMfHyLI2U0TTfA%3D%3D`;
@@ -291,10 +335,9 @@ async function createDataFetch(clustery, map, action) {
 
         const today = new Date();
         // const start = new Date(today.setMonth(today.getMonth() - 6));
-        const start = new Date(today.setMonth(today.getMonth() - 1));
+        const start = new Date(today.setMonth(today.getMonth() - 0));
         const date = new Date();
 
-        // 최근 6개월 데이터를 가져옵니다
         while (start <= date) {
             let pageNo = 1;
 
@@ -325,9 +368,14 @@ async function createDataFetch(clustery, map, action) {
         console.log(list);
         setMapView(cityName, map);
         pickerChange(clustery, map, list);
-        // action(json);
-
     }
+}
+
+function rightPanelEventSetting() {
+    const button = document.querySelector('#rightPanelCloseButton');
+    button.addEventListener('click', () => {
+        document.querySelector('#rightPanel').classList.add('hidden');
+    });
 }
 
 async function main() {
@@ -338,8 +386,8 @@ async function main() {
     const clustery = initClusterer(map);
     
 
-    searchAreaEventSetting(cityCode, await createDataFetch(clustery, map, null));
-    
+    searchAreaEventSetting(cityCode, await createDataFetch(clustery, map));
+    rightPanelEventSetting();
 
 
     // ------------------------------
