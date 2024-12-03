@@ -46,22 +46,30 @@
 
 
                 <div class="flex items-center gap-4 p-2">
-                    <select class="px-4 w-28 py-2 border rounded-md bg-white cursor-pointer outline-none hover:shadow-md">
+                    <!-- <select class="px-4 w-28 py-2 border rounded-md bg-white cursor-pointer outline-none hover:shadow-md">
                         <option>매물종류</option>
                         <option>아파트</option>
                         <option>오피스텔</option>
                         <option>빌라</option>
-                    </select>
+                    </select> -->
                     
-                    <select class="px-4 w-28 py-2 border rounded-md bg-white cursor-pointer outline-none hover:shadow-md">
+                    <select
+                        class="px-4 w-28 py-2 border rounded-md bg-white cursor-pointer outline-none hover:shadow-md">
                         <option>방크기</option>
                         <option>5평</option>
                         <option>10평</option>
-                        <option>15평</option>
                         <option>20평</option>
-                        <option>25평</option>
                         <option>30평</option>
                         <option>40평</option>
+                    </select>
+
+                    <select
+                        class="px-4 w-28 py-2 border rounded-md bg-white cursor-pointer outline-none hover:shadow-md">
+                        <option>기간</option>
+                        <option>3개월</option>
+                        <option>6개월</option>
+                        <option>9개월</option>
+                        <option>12개월</option>
                     </select>
 
                     <div class="flex items-center space-x-2">
@@ -75,9 +83,7 @@
                         </div>
                     </div>
 
-                    <p class="text-gray-600 text-sm">
-                        3억
-                    </p>
+                    <p class="text-gray-600 text-sm">5억</p>
                 </div>
             </div>
 
@@ -88,18 +94,18 @@
                     </div>
                     <div class="absolute bottom-0 bg-blue-400 h-1.5 w-full"></div>
                 </div>
-                <div class="relative h-full hover:text-blue-400">
+                <!-- <div class="relative h-full hover:text-blue-400">
                     <div class="px-4 py-3">
                         모든 거래
                     </div>
-                    <!-- <div class="absolute bottom-0 bg-blue-400 h-1.5 w-full"></div> -->
+                    <div class="absolute bottom-0 bg-blue-400 h-1.5 w-full"></div>
                 </div>
                 <div class="relative h-full hover:text-blue-400">
                     <div class="px-4 py-3">
 
                     </div>
-                    <!-- <div class="absolute bottom-0 bg-blue-400 h-1.5 w-full"></div> -->
-                </div>
+                    <div class="absolute bottom-0 bg-blue-400 h-1.5 w-full"></div>
+                </div> -->
             </div>
 
         </div>
@@ -194,9 +200,11 @@
                 </div>
 
                 <div class="flex justify-center pb-3">
-                    <button
-                        class="flex items-center gap-2 px-6 py-3 bg-black text-white rounded-lg hover:bg-opacity-90 hover:shadow-md  transition-all font-medium">
-                        <i class="fa-regular fa-star"></i>
+                    <button class="flex items-center gap-2 px-6 py-3 rounded-lg hover:bg-opacity-90 
+                        shadow-md transition-all duration-300 
+                        hover:shadow-lg hover:-translate-y-0.5 hover:scale-101 font-medium group">
+
+                        <i class="fa-regular fa-star group-hover:text-yellow-300"></i>
                         <span>즐겨찾기에 추가</span>
                     </button>
                 </div>
