@@ -216,6 +216,11 @@ function searchAreaEventSetting(cityCode, dataFetch) {
     // 검색 버튼 클릭 이벤트
     const searchButton = document.querySelector('#searchButton');
     searchButton.addEventListener('click', search);
+
+    // 가격 슬라이더 이벤트
+    document.querySelector('#price-slider').addEventListener('input', (e) => {
+        document.querySelector('#price-slider-value').innerText = parseFloat(e.target.value) / 10 + '억';
+    });
 }
 
 function setMapView(cityCode, map) {
@@ -333,9 +338,11 @@ async function createDataFetch(clustery, map) {
 
         const list = [];
 
+        const periodSetting = document.querySelector('#period').value;
+        const period = periodSetting === '기간' ? 0 : parseInt(periodSetting.slice(0, -2));
+
         const today = new Date();
-        // const start = new Date(today.setMonth(today.getMonth() - 6));
-        const start = new Date(today.setMonth(today.getMonth() - 0));
+        const start = new Date(today.setMonth(today.getMonth() - period));
         const date = new Date();
 
         while (start <= date) {
@@ -363,11 +370,13 @@ async function createDataFetch(clustery, map) {
             date.setMonth(date.getMonth() - 1);
         }
 
+        const priceFilter = document.querySelector('#price-slider').value * 1000;
+        const extentSetting = document.querySelector('#extent').value;
+        const extentFilter = extentSetting === '방크기' ? 0x7f7f7f7f : parseInt(extentSetting.slice(0, -1)) * 3.30579;
         
-
-        console.log(list);
+        console.log(extentFilter);
         setMapView(cityName, map);
-        pickerChange(clustery, map, list);
+        pickerChange(clustery, map, list.filter((item) =>  parseInt(item.dealAmount.replace(/,/g, '')) < priceFilter && parseFloat(item.excluUseAr) < extentFilter));
     }
 }
 
@@ -379,6 +388,7 @@ function rightPanelEventSetting() {
 }
 
 async function main() {
+    window.onload = () => document.querySelector('#price-slider').value = 50;
     const map = initMap();
     const cityCode = await initCityCode();
 

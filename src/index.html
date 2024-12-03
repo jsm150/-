@@ -53,7 +53,7 @@
                         <option>빌라</option>
                     </select> -->
 
-                    <select
+                    <select id="extent"
                         class="px-4 w-28 py-2 border rounded-md bg-white cursor-pointer outline-none hover:shadow-md">
                         <option>방크기</option>
                         <option>5평</option>
@@ -63,7 +63,7 @@
                         <option>40평</option>
                     </select>
 
-                    <select
+                    <select id="period"
                         class="px-4 w-28 py-2 border rounded-md bg-white cursor-pointer outline-none hover:shadow-md">
                         <option>기간</option>
                         <option>3개월</option>
@@ -75,7 +75,7 @@
                     <div class="flex items-center space-x-2">
                         <label class="text-sm font-medium text-gray-700">가격대</label>
                         <div class="flex flex-col space-y-1">
-                            <input type="range" min="0" max="100"
+                            <input id="price-slider" type="range" min="0" max="100"
                                 class="form-range h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" />
                             <div class="flex justify-between text-xs text-gray-500">
                                 <span>0억</span><span>5억</span><span>10억</span>
@@ -83,7 +83,7 @@
                         </div>
                     </div>
 
-                    <p class="text-gray-600 text-sm">5억</p>
+                    <p id="price-slider-value" class="text-gray-600 text-sm">5억</p>
                 </div>
             </div>
 
