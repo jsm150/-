@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <title>집찾기노트</title>
 </head>
+
 <body>
     <div class="flex flex-col h-screen">
 
@@ -24,94 +26,91 @@
             <div class="flex gap-4 w-2/3">
                 <div class="p-2 relative">
                     <input id="searchInput" type="text" class="pl-2 h-10 w-60" placeholder="주소 검색">
-                    <div id="autocompleteList" class="absolute w-full mt-1 bg-white border rounded-lg shadow-lg max-h-60 overflow-y-auto z-10 hidden" tabindex="0">
+                    <div id="autocompleteList"
+                        class="absolute w-full mt-1 bg-white border rounded-lg shadow-lg max-h-60 overflow-y-auto z-10 hidden"
+                        tabindex="0">
                         <div class="py-2 hidden">
-                            <div class="px-4 py-2 cursor-pointer hidden">자동완성 항목 1</div>
-                            <div class="px-4 py-2 cursor-pointer hidden">자동완성 항목 2</div>
-                            <div class="px-4 py-2 cursor-pointer hidden">자동완성 항목 3</div>
-                            <div class="px-4 py-2 cursor-pointer hidden">자동완성 항목 3</div>
-                            <div class="px-4 py-2 cursor-pointer hidden">자동완성 항목 3</div>
+                            <div class="px-4 py-2 cursor-pointer hidden"></div>
+                            <div class="px-4 py-2 cursor-pointer hidden"></div>
+                            <div class="px-4 py-2 cursor-pointer hidden"></div>
+                            <div class="px-4 py-2 cursor-pointer hidden"></div>
+                            <div class="px-4 py-2 cursor-pointer hidden"></div>
                         </div>
                     </div>
                 </div>
-                <button class="flex items-center text-xl mr-2">
+                <button id="searchButton" class="flex items-center text-xl mr-2">
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </button>
-        
+
                 <div class="w-px bg-gray-300"></div>
-        
-                
+
+
                 <div class="flex items-center gap-4 p-2">
-                    
-                    <select class="px-4 py-2 border rounded-md bg-white cursor-pointer outline-none hover:shadow-md">
-                    <option>역세권/도보</option>
-                    <option>5분거리</option>
-                    <option>10분거리</option>
-                    <option>15분거리</option>
+                    <select class="px-4 w-28 py-2 border rounded-md bg-white cursor-pointer outline-none hover:shadow-md">
+                        <option>매물종류</option>
+                        <option>아파트</option>
+                        <option>오피스텔</option>
+                        <option>빌라</option>
                     </select>
-                
                     
                     <select class="px-4 w-28 py-2 border rounded-md bg-white cursor-pointer outline-none hover:shadow-md">
-                    <option>매물종류</option>
-                    <option>아파트</option>
-                    <option>오피스텔</option>
-                    <option>빌라</option>
-                    </select>
-        
-                    <select class="px-4 w-28 py-2 border rounded-md bg-white cursor-pointer outline-none hover:shadow-md">
-                    <option>가격대</option>
-                    <option>5000만</option>
-                    <option>1억</option>
-                    <option>1억 5000만</option>
-                    <option>2억</option>
-                    <option>2억 5000만</option>
-                    <option>3억</option>
+                        <option>방크기</option>
+                        <option>5평</option>
+                        <option>10평</option>
+                        <option>15평</option>
+                        <option>20평</option>
+                        <option>25평</option>
+                        <option>30평</option>
+                        <option>40평</option>
                     </select>
 
-                    <select class="px-4 w-28 py-2 border rounded-md bg-white cursor-pointer outline-none hover:shadow-md">
-                    <option>방크기</option>
-                    <option>5평</option>
-                    <option>10평</option>
-                    <option>15평</option>
-                    <option>20평</option>
-                    <option>25평</option>
-                    <option>30평</option>
-                    <option>40평</option>
-                    </select>
-        
+                    <div class="flex items-center space-x-2">
+                        <label class="text-sm font-medium text-gray-700">가격대</label>
+                        <div class="flex flex-col space-y-1">
+                            <input type="range" min="0" max="100" 
+                                class="form-range h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" />
+                            <div class="flex justify-between text-xs text-gray-500">
+                                <span>0억</span><span>5억</span><span>10억</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="text-gray-600 text-sm">
+                        3억
+                    </p>
                 </div>
             </div>
 
-                <div class="flex-1 flex">
-                    <div class="relative h-full hover:text-blue-400">
-                        <div class="w-32 py-3 text-center">
-                            최근 거래
-                        </div>
-                        <div class="absolute bottom-0 bg-blue-400 h-1.5 w-full"></div>
+            <div class="flex-1 flex">
+                <div class="relative h-full hover:text-blue-400">
+                    <div class="w-32 py-3 text-center">
+                        최근 거래
                     </div>
-                    <div class="relative h-full hover:text-blue-400">
-                        <div class="px-4 py-3">
-                            모든 거래
-                        </div>
-                        <!-- <div class="absolute bottom-0 bg-blue-400 h-1.5 w-full"></div> -->
-                    </div>
-                    <div class="relative h-full hover:text-blue-400">
-                        <div class="px-4 py-3">
-                            
-                        </div>
-                        <!-- <div class="absolute bottom-0 bg-blue-400 h-1.5 w-full"></div> -->
-                    </div>
+                    <div class="absolute bottom-0 bg-blue-400 h-1.5 w-full"></div>
                 </div>
-            
+                <div class="relative h-full hover:text-blue-400">
+                    <div class="px-4 py-3">
+                        모든 거래
+                    </div>
+                    <!-- <div class="absolute bottom-0 bg-blue-400 h-1.5 w-full"></div> -->
+                </div>
+                <div class="relative h-full hover:text-blue-400">
+                    <div class="px-4 py-3">
+
+                    </div>
+                    <!-- <div class="absolute bottom-0 bg-blue-400 h-1.5 w-full"></div> -->
+                </div>
+            </div>
+
         </div>
 
-        
+
         <div class="w-full h-px bg-gray-400"></div>
 
         <div class="flex flex-1 w-screen">
             <div id="map" class="w-2/3 h-full"></div>
             <div class="flex-1">
-                <div class="mx-auto p-6 bg-white rounded-lg mt-4">        
+                <div class="mx-auto p-6 bg-white rounded-lg mt-4">
                     <div class="border-b pb-6">
                         <p class="text-sm text-gray-500">e편한세상 아파트</p>
                         <div class="flex items-center justify-between mb-4">
@@ -121,7 +120,7 @@
                             </button>
                         </div>
                         <div class="grid grid-cols-2 2xl:grid-cols-4 gap-4">
-                            <div class="text-center p-4 bg-gray-50 rounded-lg">                    
+                            <div class="text-center p-4 bg-gray-50 rounded-lg">
                                 <p class="text-sm text-gray-500">실거래가</p>
                                 <p class="text-xl font-bold text-custom mt-1">8억 5,000만원</p>
                             </div>
@@ -129,7 +128,7 @@
                                 <p class="text-sm text-gray-500">거래일자</p>
                                 <p class="text-xl font-bold text-custom mt-1">2024.02.15</p>
                             </div>
-                            <div class="text-center p-4 bg-gray-50 rounded-lg">        
+                            <div class="text-center p-4 bg-gray-50 rounded-lg">
                                 <p class="text-sm text-gray-500">건물유형</p>
                                 <p class="text-xl font-bold mt-1">아파트</p>
                             </div>
@@ -140,29 +139,34 @@
                                     <p class="text-sm text-gray-500 font-bold">(33평)</p>
                                 </div>
                             </div>
-                        </div>        
+                        </div>
                     </div>
-        
+
                     <div class="py-6 border-b">
                         <h2 class="text-lg font-bold mb-4">상세 거래 정보</h2>
-                        <div class="grid grid-cols-2 gap-4">                <div class="flex justify-between p-3 bg-gray-50 rounded-lg">
-                                <span class="text-gray-500">층수</span>                    <span class="font-medium">15층</span>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="flex justify-between p-3 bg-gray-50 rounded-lg">
+                                <span class="text-gray-500">층수</span> <span class="font-medium">15층</span>
                             </div>
-                            <div class="flex justify-between p-3 bg-gray-50 rounded-lg">                    <span class="text-gray-500">건축년도</span>
-                                <span class="font-medium">2015년</span>                </div>
+                            <div class="flex justify-between p-3 bg-gray-50 rounded-lg"> <span
+                                    class="text-gray-500">건축년도</span>
+                                <span class="font-medium">2015년</span>
+                            </div>
                             <div class="flex justify-between p-3 bg-gray-50 rounded-lg">
                                 <span class="text-gray-500">거래유형</span>
                                 <span class="font-medium">매매</span>
                             </div>
-                            <div class="flex justify-between p-3 bg-gray-50 rounded-lg">                    <span class="text-gray-500">평균대비</span>
-                                <span class="font-medium text-custom">+3.2%</span>                </div>
+                            <div class="flex justify-between p-3 bg-gray-50 rounded-lg"> <span
+                                    class="text-gray-500">평균대비</span>
+                                <span class="font-medium text-custom">+3.2%</span>
+                            </div>
                         </div>
                     </div>
-        
+
                     <div class="py-6 border-b">
                         <h2 class="text-lg font-bold mb-4">주변 실거래가 비교</h2>
                         <div class="space-y-3">
-                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">                    
+                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                                 <div>
                                     <p class="font-medium">역삼동 123-46</p>
                                     <p class="text-sm text-gray-500 mt-1">84.92㎡, 15층</p>
@@ -171,12 +175,13 @@
                                     <p class="font-bold text-custom">8억 3,000만원</p>
                                     <p class="text-sm text-gray-500 mt-1">2024.02.10</p>
                                 </div>
-                            </div>                
+                            </div>
                             <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                                 <div>
                                     <p class="font-medium">역삼동 123-47</p>
                                     <p class="text-sm text-gray-500 mt-1">84.92㎡, 12층</p>
-                                </div>                    <div class="text-right">
+                                </div>
+                                <div class="text-right">
                                     <p class="font-bold text-custom">8억 2,000만원</p>
                                     <p class="text-sm text-gray-500 mt-1">2024.02.05</p>
                                 </div>
@@ -186,7 +191,8 @@
                 </div>
 
                 <div class="flex justify-center pb-3">
-                    <button class="flex items-center gap-2 px-6 py-3 bg-black text-white rounded-lg hover:bg-opacity-90 hover:shadow-md  transition-all font-medium">
+                    <button
+                        class="flex items-center gap-2 px-6 py-3 bg-black text-white rounded-lg hover:bg-opacity-90 hover:shadow-md  transition-all font-medium">
                         <i class="fa-regular fa-star"></i>
                         <span>즐겨찾기에 추가</span>
                     </button>
@@ -195,9 +201,6 @@
             </div>
         </div>
     </div>
-    
-
-    
 
 
 
@@ -205,10 +208,15 @@
 
 
 
-    <script src="http://dapi.kakao.com/v2/maps/sdk.js?appkey=4b784a9366d345b4ae0fc269a0ade70c&libraries=clusterer"></script>
+
+
+
+    <script
+        src="http://dapi.kakao.com/v2/maps/sdk.js?appkey=4b784a9366d345b4ae0fc269a0ade70c&libraries=clusterer,services"></script>
     <script src="./trie.js"></script>
     <script src="./parser.js"></script>
     <script src="./index.js"></script>
 
 </body>
+
 </html>
