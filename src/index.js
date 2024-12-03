@@ -49,7 +49,6 @@ function searchAreaEventSetting(cityCode, dataFetch) {
 
         const getCurrentResults = () => currentResults;
         const setSelectedIndex = (index) => {
-            console.log(index);
             return selectedIndex = index;
         } 
 
@@ -66,7 +65,6 @@ function searchAreaEventSetting(cityCode, dataFetch) {
         };
 
         const getSelectedItem = () => {
-            console.log("getSelectedItem" + selectedIndex);
             return selectedIndex >= 0 ? currentResults[selectedIndex] : null;
         }
 
@@ -154,18 +152,23 @@ function searchAreaEventSetting(cityCode, dataFetch) {
         });
     };
 
+    const search = () => {
+        // 검색
+        const input = searchInput.value.replaceAll(" ", "");
+        const jamo = textToJamo(input);
+        const code = trie.search(jamo);
+        if (code !== '') {
+            dataFetch(cityCode[code], code);
+            renderAutoComplete([]);
+        }
+    }
+
     // 키보드 이벤트 핸들러
     const handleKeyboardNavigation = (event) => {
         const keyActions = {
             'Enter': () => {
                 if (autoCompleteManager.getSelectedItem() === null) {
-                    // 검색
-                    const input = searchInput.value.replaceAll(" ", "");
-                    const jamo = textToJamo(input);
-                    const code = trie.search(jamo);
-                    if (code !== '') {
-                        dataFetch(cityCode[code]);
-                    }
+                    search();
                 }
                 else {
                     const selectedItem = autoCompleteManager.getSelectedItem();
@@ -212,12 +215,17 @@ function searchAreaEventSetting(cityCode, dataFetch) {
 
     // 검색 버튼 클릭 이벤트
     const searchButton = document.querySelector('#searchButton');
-    searchButton.addEventListener('click', () => {
-        const input = searchInput.value.replaceAll(" ", "");
-        const jamo = textToJamo(input);
-        const code = trie.search(jamo);
-        if (code !== '') {
-            dataFetch(cityCode[code]);
+    searchButton.addEventListener('click', search);
+}
+
+function setMapView(cityCode, map) {
+    const geocoder = new kakao.maps.services.Geocoder();
+    geocoder.addressSearch(cityCode, function(result, status) {
+        // 정상적으로 검색이 완료됐으면 
+        if (status === kakao.maps.services.Status.OK) {
+            const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+            map.setCenter(coords);
+            map.setLevel(7);
         }
     });
 }
@@ -225,16 +233,14 @@ function searchAreaEventSetting(cityCode, dataFetch) {
 function pickerChange(clusterer, map, arr) {
     clusterer.clear();
     
-    // roadNm(도로명) + roadNmBonbun(건물 코드)
+    // estateAgentSggNm(시군구) + umdNm(동) + roadNm(도로명) + roadNmBonbun(건물 코드)
     arr.forEach((item) => {
         const geocoder = new kakao.maps.services.Geocoder();
-        console.log(`${item.roadNm} ${parseInt(item.roadNmBonbun)}`);
-        geocoder.addressSearch(`${item.roadNm} ${parseInt(item.roadNmBonbun)}`, function(result, status) {
+        geocoder.addressSearch(`${item.estateAgentSggNm} ${item.umdNm} ${item.roadNm} ${parseInt(item.roadNmBonbun)}`, function(result, status) {
             // 정상적으로 검색이 완료됐으면 
              if (status === kakao.maps.services.Status.OK) {
         
                 const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
-                console.log(coords);
         
                 // 결과값으로 받은 위치를 마커로 표시합니다
                 const marker = new kakao.maps.Marker({
@@ -243,11 +249,14 @@ function pickerChange(clusterer, map, arr) {
                 
                 clusterer.addMarker(marker);
 
+                const price = parseInt(item.dealAmount.replace(/,/g, ''));
+                const priceStr = price > 10000 ? `${Math.floor(price / 10000)}억 ${(price % 10000).toLocaleString()}` : `${price.toLocaleString()}`;
+                
                 const infowindow = new kakao.maps.InfoWindow({
                     content : `<div class="flex flex-col items-center">
-                                    <div class="bg-white shadow-lg rounded-xl p-3 mb-2 transition-transform transform group-hover:scale-105 backdrop-blur-sm bg-opacity-95">
-                                        <div class="text-sm font-medium">모라동원타운 </div>
-                                        <div class="text-blue-500 font-bold text-lg">4억 2,000</div>
+                                    <div class="bg-white shadow-lg w-36 rounded-xl p-3 mb-2 transition-transform transform group-hover:scale-105 backdrop-blur-sm bg-opacity-95">
+                                        <div class="text-sm font-medium">${item.aptNm}</div>
+                                        <div class="text-blue-500 font-bold text-lg">${priceStr}</div>
                                     </div>
                                 </div>`,
                     removable : true
@@ -274,7 +283,7 @@ function pickerChange(clusterer, map, arr) {
 }
 
 async function createDataFetch(clustery, map, action) {
-    return async (cityCode) => {
+    return async (cityCode, cityName) => {
         const size = 1000;
         const url = `https://apis.data.go.kr/1613000/RTMSDataSvcAptTradeDev/getRTMSDataSvcAptTradeDev?LAWD_CD=${cityCode}&numOfRows=${size}&serviceKey=bMwwNr1uwE0kwt%2BQ5tCxjvNwBHQL0bIaJiBfd31z8vIvj5gcagERlUf6Pw0J%2BmQWhyjCNsednMfHyLI2U0TTfA%3D%3D`;
 
@@ -282,7 +291,7 @@ async function createDataFetch(clustery, map, action) {
 
         const today = new Date();
         // const start = new Date(today.setMonth(today.getMonth() - 6));
-        const start = new Date(today.setMonth(today.getMonth() - 0));
+        const start = new Date(today.setMonth(today.getMonth() - 1));
         const date = new Date();
 
         // 최근 6개월 데이터를 가져옵니다
@@ -314,6 +323,7 @@ async function createDataFetch(clustery, map, action) {
         
 
         console.log(list);
+        setMapView(cityName, map);
         pickerChange(clustery, map, list);
         // action(json);
 

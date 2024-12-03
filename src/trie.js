@@ -28,7 +28,6 @@ class Trie {
             if(!node.children[char]) {
                 return false;
             }
-            console.log(char);
             node = node.children[char];
         }
         return node.string;
