@@ -107,9 +107,12 @@
 
         <div class="w-full h-px bg-gray-400"></div>
 
-        <div class="flex flex-1 w-screen">
+        <div class="flex flex-1 w-screen overflow-hidden">
+            <!-- 왼쪽에는 지도 -->
             <div id="map" class="w-2/3 h-full"></div>
-            <div class="flex-1">
+
+            <!-- 오른쪽은 상세정보 -->
+            <div id="rightPanel" class="flex-1 hidden overflow-y-auto">
                 <div class="mx-auto p-6 bg-white rounded-lg mt-4">
                     <div class="border-b pb-6">
                         <p class="text-sm text-gray-500">e편한세상 아파트</p>
