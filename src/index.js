@@ -157,7 +157,7 @@ function searchAreaEventSetting(cityCode, dataFetch) {
         const input = searchInput.value.replaceAll(" ", "");
         const jamo = textToJamo(input);
         const code = trie.search(jamo);
-        if (code !== '') {
+        if (code !== '' && cityCode[code] !== undefined) {
             dataFetch(cityCode[code], code);
             renderAutoComplete([]);
         }
@@ -235,12 +235,104 @@ function setMapView(cityCode, map) {
     });
 }
 
+const noticeFadeOut = (() => {
+    let prev = null;
+
+    return (notice) => {
+        // hidden 제거하고 투명도 설정
+        notice.classList.remove('hidden');
+        
+        notice.classList.remove('opacity-0');
+        notice.classList.add('opacity-100');
+
+        if (prev !== null) prev.cancel();
+
+        const fadeOut = (() => {
+            let can = true;
+
+            const run = () => {
+                setTimeout(() => {
+                    if (!can) return;
+                    notice.classList.remove('opacity-100');
+                    notice.classList.add('opacity-0');
+                    // transition이 완료된 후 hidden 추가
+                    setTimeout(() => {
+                        if (!can) return;
+                        notice.classList.add('hidden');
+                    }, 1000); // transition-duration과 동일한 시간
+                }, 2000);
+            }
+
+            return {
+                run,
+                cancel: () => can = false
+            }
+        })();
+        
+        // 2초 후 페이드 아웃
+        fadeOut.run();
+        prev = fadeOut;
+    }
+})();
+
+function bookmarkEventSetting(map, clusterer, coords, marker) {
+    // 마커를 누를때마다 이벤트를 갱신해야 하기 때문에 onclick으로 설정
+    document.querySelector('#bookmark-button').onclick = () => {
+        const panel = document.querySelector('#information');
+        if (document.querySelector('#bookmark-list').innerHTML.includes(panel.querySelector('#address').innerText)) {
+
+            document.querySelector('#bookmark-notice-add-success').classList.add('hidden');
+            const notice = document.querySelector('#bookmark-notice-add-fail');
+            noticeFadeOut(notice);
+            return;
+        } 
+
+        const itemHtml = `
+        <div class="border rounded-lg p-4 hover:shadow-md transition-shadow">
+            <div class="flex justify-between items-start">
+                <div>
+                    <h3 class="font-bold text-lg">${panel.querySelector('#address').innerText}</h3>
+                    <p class="text-gray-500 text-sm mt-1">아파트 · ${panel.querySelector('#sizeOfmeter').innerText} · ${panel.querySelector('#floor').innerText} · ${panel.querySelector('#apt').innerText}</p>
+                    <p class="text-custom font-bold mt-2">${panel.querySelector('#price').innerText}</p>
+                    <p class="text-gray-500 text-sm">${panel.querySelector('#date').innerText} 거래</p>
+                </div>
+                <button class="text-gray-400 hover:text-red-600">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>`;
+
+        const item = document.createRange().createContextualFragment(itemHtml);
+        document.querySelector('#bookmark-list').appendChild(item);
+        const addedItem = document.querySelector('#bookmark-list').lastElementChild;
+        addedItem.querySelector('button').addEventListener('click', (e) => {
+            e.stopPropagation();
+            addedItem.remove()
+        });
+
+        console.log(coords);
+        addedItem.onclick = () => {
+            map.setCenter(coords);
+            clusterer.addMarker(marker);
+            kakao.maps.event.trigger(marker, 'mouseover');
+            kakao.maps.event.trigger(marker, 'click');
+            
+        };
+
+
+        document.querySelector('#bookmark-notice-add-fail').classList.add('hidden');
+        const notice = document.querySelector('#bookmark-notice-add-success');
+        noticeFadeOut(notice);
+    };
+}
+
+
 function priceFormat(priceNum) {
     const price = parseInt(priceNum.replace(/,/g, ''));
     return price > 10000 ? `${Math.floor(price / 10000)}억 ${(price % 10000).toLocaleString()}만원` : `${price.toLocaleString()}만원`;
 }
 
-function createMarkerClickEvent(data, list) { 
+function createMarkerClickEvent(data, list, map, clusterer, coords, marker) { 
     return () => {
         const panel = document.querySelector('#information');
 
@@ -275,7 +367,7 @@ function createMarkerClickEvent(data, list) {
             document.querySelector('#around1').classList.remove('hidden');
         }
 
-        if (list.length >= 2) {
+        if (list.length >= 2) { 
             panel.querySelector('#around-name2').innerText = list[1].aptNm;
             panel.querySelector('#around-size-floor2').innerText = `${parseFloat(list[1].excluUseAr).toFixed(2)}㎡ / ${list[1].floor}층`;
             panel.querySelector('#around-price2').innerText = priceFormat(list[1].dealAmount);
@@ -285,10 +377,10 @@ function createMarkerClickEvent(data, list) {
             document.querySelector('#around2').classList.remove('hidden');
         }
 
+        bookmarkEventSetting(map, clusterer, coords, marker);
         document.querySelector('#information-button').click();
     };
 }
-
 
 
 function pickerChange(clusterer, map, arr) {
@@ -297,8 +389,13 @@ function pickerChange(clusterer, map, arr) {
     /*
      * 같은 건물의 여러개의 거래 데이터가 있다면 한개만 표시되는 문제가 있음.
      */
-    
+
     // estateAgentSggNm(시군구) + umdNm(동) + roadNm(도로명) + roadNmBonbun(건물 코드)
+
+    const curryCreateMarkerClickEvent = ((clusterer, map, arr) => 
+                                            (item, coords, marker) => 
+                                                createMarkerClickEvent(item, arr, map, clusterer, coords, marker))(clusterer, map, arr);
+
     arr.forEach((item) => {
         const geocoder = new kakao.maps.services.Geocoder();
         geocoder.addressSearch(`${item.estateAgentSggNm} ${item.umdNm} ${item.roadNm} ${parseInt(item.roadNmBonbun)}`, function(result, status) {
@@ -326,11 +423,12 @@ function pickerChange(clusterer, map, arr) {
                 kakao.maps.event.addListener(marker, 'mouseover', function() {
                     infowindow.open(map, marker);
                 });
-        
+            
                 kakao.maps.event.addListener(marker, 'mouseout', function() {
                     infowindow.close();
                 });
-                kakao.maps.event.addListener(marker, 'click', createMarkerClickEvent(item, arr));
+                
+                kakao.maps.event.addListener(marker, 'click', curryCreateMarkerClickEvent(item, coords, marker));
             } 
         });
     });
@@ -379,7 +477,6 @@ async function createDataFetch(clustery, map) {
         const extentSetting = document.querySelector('#extent').value;
         const extentFilter = extentSetting === '방크기' ? 0x7f7f7f7f : parseInt(extentSetting.slice(0, -1)) * 3.30579;
         
-        console.log(extentFilter);
         setMapView(cityName, map);
         pickerChange(clustery, map, list.filter((item) =>  parseInt(item.dealAmount.replace(/,/g, '')) < priceFilter && parseFloat(item.excluUseAr) < extentFilter));
     }
@@ -412,33 +509,7 @@ function rightPanelEventSetting() {
     }));
 }
 
-function bookmarkEventSetting(map, clustery) {
-    document.querySelector('#bookmark-button').addEventListener('click', () => {
-        const panel = document.querySelector('#information');
-        if (document.querySelector('#bookmark-list').innerHTML.includes(panel.querySelector('#address').innerText)) return;
 
-        const itemHtml = `
-        <div class="border rounded-lg p-4 hover:shadow-md transition-shadow">
-            <div class="flex justify-between items-start">
-                <div>
-                    <h3 class="font-bold text-lg">${panel.querySelector('#address').innerText}</h3>
-                    <p class="text-gray-500 text-sm mt-1">아파트 · ${panel.querySelector('#sizeOfmeter').innerText} · ${panel.querySelector('#floor').innerText} · ${panel.querySelector('#apt').innerText}</p>
-                    <p class="text-custom font-bold mt-2">${panel.querySelector('#price').innerText}</p>
-                    <p class="text-gray-500 text-sm">${panel.querySelector('#date').innerText} 거래</p>
-                </div>
-                <button class="text-gray-400 hover:text-red-600">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </div>
-        </div>`;
-
-        const item = document.createRange().createContextualFragment(itemHtml);
-        document.querySelector('#bookmark-list').appendChild(item);
-        const addedItem = document.querySelector('#bookmark-list').lastElementChild;
-        addedItem.querySelector('button').addEventListener('click', () => addedItem.remove());
-
-    });
-}
 
 async function main() {
     window.onload = () => document.querySelector('#price-slider').value = 50;
@@ -448,7 +519,6 @@ async function main() {
 
     searchAreaEventSetting(cityCode, await createDataFetch(clustery, map));
     rightPanelEventSetting();
-    bookmarkEventSetting(map, clustery);
 
 
 }
