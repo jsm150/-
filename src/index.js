@@ -22,7 +22,7 @@ function initClusterer(map) {
 }
 
 async function initCityCode() {
-    const response = await fetch('./cityCode.json');
+    const response = await fetch('./src/cityCode.json');
     return await response.json();
 }
 
