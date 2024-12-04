@@ -242,8 +242,8 @@ function priceFormat(priceNum) {
 
 function createMarkerClickEvent(data, list) { 
     return () => {
-        const panel = document.querySelector('#rightPanel');
-        panel.classList.remove('hidden');
+        const panel = document.querySelector('#information');
+
 
         panel.querySelector('#apt').innerText = data.aptNm
         panel.querySelector('#address').innerText = `${data.estateAgentSggNm} ${data.roadNm} ${parseInt(data.roadNmBonbun)}`
@@ -285,6 +285,7 @@ function createMarkerClickEvent(data, list) {
             document.querySelector('#around2').classList.remove('hidden');
         }
 
+        document.querySelector('#informationButton').click();
     };
 }
 
@@ -381,10 +382,32 @@ async function createDataFetch(clustery, map) {
 }
 
 function rightPanelEventSetting() {
-    const button = document.querySelector('#rightPanelCloseButton');
-    button.addEventListener('click', () => {
-        document.querySelector('#rightPanel').classList.add('hidden');
+    document.querySelector('#rightPanelCloseButton').addEventListener('click', () => {
+        document.querySelector('#information').classList.add('hidden');
     });
+
+
+
+    function makeHighlightChange(action) {
+         return (e) => {
+            const tabBar = document.querySelectorAll('#tab-bar > div > div');
+            tabBar.forEach((item) => item.classList.add('hidden'));
+            e.target.parentElement.querySelector('div').classList.remove('hidden');
+            
+            const contentList = document.querySelectorAll('#content > div');
+            contentList.forEach((item) => item.classList.add('hidden'));
+            action();
+        }
+    }
+
+    document.querySelector('#informationButton').addEventListener('click', makeHighlightChange(() => {
+        if (document.querySelector('#apt').innerText === '') return;
+        document.querySelector('#information').classList.remove('hidden');
+    }));
+
+    document.querySelector('#bookmarkButton').addEventListener('click', makeHighlightChange(() => {
+        document.querySelector('#bookmark').classList.remove('hidden');
+    }));
 }
 
 async function main() {
