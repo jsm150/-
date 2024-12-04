@@ -285,7 +285,7 @@ function createMarkerClickEvent(data, list) {
             document.querySelector('#around2').classList.remove('hidden');
         }
 
-        document.querySelector('#informationButton').click();
+        document.querySelector('#information-button').click();
     };
 }
 
@@ -293,6 +293,10 @@ function createMarkerClickEvent(data, list) {
 
 function pickerChange(clusterer, map, arr) {
     clusterer.clear();
+    
+    /*
+     * 같은 건물의 여러개의 거래 데이터가 있다면 한개만 표시되는 문제가 있음.
+     */
     
     // estateAgentSggNm(시군구) + umdNm(동) + roadNm(도로명) + roadNmBonbun(건물 코드)
     arr.forEach((item) => {
@@ -386,8 +390,6 @@ function rightPanelEventSetting() {
         document.querySelector('#information').classList.add('hidden');
     });
 
-
-
     function makeHighlightChange(action) {
          return (e) => {
             const tabBar = document.querySelectorAll('#tab-bar > div > div');
@@ -400,30 +402,54 @@ function rightPanelEventSetting() {
         }
     }
 
-    document.querySelector('#informationButton').addEventListener('click', makeHighlightChange(() => {
+    document.querySelector('#information-button').addEventListener('click', makeHighlightChange(() => {
         if (document.querySelector('#apt').innerText === '') return;
         document.querySelector('#information').classList.remove('hidden');
     }));
 
-    document.querySelector('#bookmarkButton').addEventListener('click', makeHighlightChange(() => {
+    document.querySelector('#bookmark-area-button').addEventListener('click', makeHighlightChange(() => {
         document.querySelector('#bookmark').classList.remove('hidden');
     }));
+}
+
+function bookmarkEventSetting(map, clustery) {
+    document.querySelector('#bookmark-button').addEventListener('click', () => {
+        const panel = document.querySelector('#information');
+        if (document.querySelector('#bookmark-list').innerHTML.includes(panel.querySelector('#address').innerText)) return;
+
+        const itemHtml = `
+        <div class="border rounded-lg p-4 hover:shadow-md transition-shadow">
+            <div class="flex justify-between items-start">
+                <div>
+                    <h3 class="font-bold text-lg">${panel.querySelector('#address').innerText}</h3>
+                    <p class="text-gray-500 text-sm mt-1">아파트 · ${panel.querySelector('#sizeOfmeter').innerText} · ${panel.querySelector('#floor').innerText} · ${panel.querySelector('#apt').innerText}</p>
+                    <p class="text-custom font-bold mt-2">${panel.querySelector('#price').innerText}</p>
+                    <p class="text-gray-500 text-sm">${panel.querySelector('#date').innerText} 거래</p>
+                </div>
+                <button class="text-gray-400 hover:text-red-600">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>`;
+
+        const item = document.createRange().createContextualFragment(itemHtml);
+        document.querySelector('#bookmark-list').appendChild(item);
+        const addedItem = document.querySelector('#bookmark-list').lastElementChild;
+        addedItem.querySelector('button').addEventListener('click', () => addedItem.remove());
+
+    });
 }
 
 async function main() {
     window.onload = () => document.querySelector('#price-slider').value = 50;
     const map = initMap();
     const cityCode = await initCityCode();
-
-    // 마커 클러스터러를 생성합니다 
     const clustery = initClusterer(map);
-    
 
     searchAreaEventSetting(cityCode, await createDataFetch(clustery, map));
     rightPanelEventSetting();
+    bookmarkEventSetting(map, clustery);
 
-
-    // ------------------------------
 
 }
 

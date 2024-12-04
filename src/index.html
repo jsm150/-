@@ -89,13 +89,13 @@
 
             <div id="tab-bar" class="flex-1 flex">
                 <div class="relative h-full hover:text-blue-400">
-                    <button id="informationButton" class="w-32 py-3 text-center">
+                    <button id="information-button" class="w-32 py-3 text-center">
                         상세 정보
                     </button>
                     <div class="absolute bottom-0 bg-blue-400 h-1.5 w-full"></div>
                 </div>
                 <div class="relative h-full hover:text-blue-400">
-                    <button id="bookmarkButton" class="px-4 py-3 w-32 text-center">
+                    <button id="bookmark-area-button" class="px-4 py-3 w-32 text-center">
                         즐겨 찾기
                     </button>
                     <div class="absolute bottom-0 bg-blue-400 h-1.5 w-full hidden"></div>
@@ -201,7 +201,7 @@
                 </div>
 
                 <div class="flex justify-center pb-3">
-                    <button class="flex items-center gap-2 px-6 py-3 rounded-lg hover:bg-opacity-90 
+                        <button id="bookmark-button" class="flex items-center gap-2 px-6 py-3 rounded-lg hover:bg-opacity-90 
                         shadow-md transition-all duration-300 
                         hover:shadow-lg hover:-translate-y-0.5 hover:scale-101 font-medium group">
 
@@ -218,47 +218,14 @@
                             <h2 class="text-xl font-bold">저장된 매물</h2><button
                                 class="text-gray-500 hover:text-gray-700"><i class="fas fa-plus"></i> 새로운 매물 추가</button>
                         </div>
-                        <div class="space-y-4">
-                            <div class="border rounded-lg p-4 hover:shadow-md transition-shadow">
-                                <div class="flex justify-between items-start">
-                                    <div>
-                                        <h3 class="font-bold text-lg">강남구 역삼동 123-45</h3>
-                                        <p class="text-gray-500 text-sm mt-1">아파트 · 84.92㎡ · 15층</p>
-                                        <p class="text-custom font-bold mt-2">8억 5,000만원</p>
-                                        <p class="text-gray-500 text-sm">2024.02.15 거래</p>
-                                    </div>
-                                    <button class="text-gray-400 hover:text-red-600">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="border rounded-lg p-4 hover:shadow-md transition-shadow">
-                                <div class="flex justify-between items-start">
-                                    <div>
-                                        <h3 class="font-bold text-lg">강남구 역삼동 123-45</h3>
-                                        <p class="text-gray-500 text-sm mt-1">아파트 · 84.92㎡ · 15층</p>
-                                        <p class="text-custom font-bold mt-2">8억 5,000만원</p>
-                                        <p class="text-gray-500 text-sm">2024.02.15 거래</p>
-                                    </div>
-                                    <button class="text-gray-400 hover:text-red-600">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </div>
+                        <div id="bookmark-list" class="space-y-4">
+                            <!-- 여기에 북마크된 목록이 추가됩니다 -->
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-
-
-
-
-
-
 
 
 
