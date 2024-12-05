@@ -329,7 +329,7 @@ function bookmarkEventSetting(map, clusterer, coords, marker) {
 
 function priceFormat(priceNum) {
     const price = parseInt(priceNum.replace(/,/g, ''));
-    return price > 10000 ? `${Math.floor(price / 10000)}억 ${(price % 10000).toLocaleString()}만원` : `${price.toLocaleString()}만원`;
+    return price >= 10000 ? `${Math.floor(price / 10000)}억 ${(price % 10000).toLocaleString()}만원` : `${price.toLocaleString()}만원`;
 }
 
 function createMarkerClickEvent(data, list, map, clusterer, coords, marker) { 
