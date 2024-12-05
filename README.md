@@ -16,38 +16,28 @@ https://jsm150.github.io/HouseNote
 
 
 ## 📱 화면 구성
-![](./docs/image.png)
+![](https://github.com/jsm150/HouseNote/blob/main/docs/main.png)
 
 
 ## 🔍 주요 기능
 ### 1. 실거래가 조회
    - 검색창 자동 완성 
 
-      ![](.\docs\autoword.webp)
+      ![](https://github.com/jsm150/HouseNote/blob/main/docs/autoword.webp)
 
    - 정보 표시
 
-      <video src="./docs\1205.mp4" autoplay loop muted controls>
-</video>
-
-
-
-
-
-
-   <!-- - 지역별 검색
-   - 기간별 검색 -->
+      ![](https://github.com/jsm150/HouseNote/blob/main/docs/1205.webp)
    
 ### 2. 즐겨찾기 기능
    - 관심 매물 등록
 
-      <video src=".\docs\1205 (1).mp4" autoplay loop muted controls>
-</video>
+      ![](https://github.com/jsm150/HouseNote/blob/main/docs/1205(1).webp)
 
    - 매물 정보 확인
 
-      <video src=".\docs\1205 (2).mp4" autoplay loop muted controls>
-</video>
+      ![](https://github.com/jsm150/HouseNote/blob/main/docs/1205(2).webp)
+
 
 ## 🛠️ 설치 방법
 ```bash
